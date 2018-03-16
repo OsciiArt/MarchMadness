@@ -140,30 +140,32 @@ sub['Pred'] = pd.DataFrame(pred)
 # sub[['ID', 'Pred']].to_csv('../output/Wstats2018_1.csv', index=False)
 
 sub[['ID', 'Pred']].to_csv('../output/Wstats_2018_AB.csv', index=False)
-# block = pd.read_csv("../additional/Wblock.csv")
-# block['TeamID'] = block['TeamID'].astype(np.int64)
-# def blockAB(TeamID, block):
-#     # print(TeamID)
-#     if TeamID in block['TeamID'].as_matrix().tolist():
-#         # print(block.loc[(block.TeamID==TeamID)]['block'].iloc[0])
-#         return block.loc[(block.TeamID==TeamID)]['block'].iloc[0]
-#         # return block.loc[(block.TeamID==TeamID)]['block']
-#     else:
-#         return 0
-# sub['WBlock'] = sub['WTeamID'].apply(lambda x: blockAB(x, block))
-# sub['LBlock'] = sub['LTeamID'].apply(lambda x: blockAB(x, block))
-# subA = sub.copy()
-# subA['Pred'] = subA.apply(lambda x: 0 if (x['WBlock']=='A' and x['LBlock']=='B') else x['Pred'], axis=1)
-# subA['Pred'] = subA.apply(lambda x: 1 if (x['WBlock']=='B' and x['LBlock']=='A') else x['Pred'], axis=1)
-# subA[['ID', 'Pred']].to_csv('../output/Wstats_2018_A.csv', index=False)
-#
-# subB = sub.copy()
-# subB['Pred'] = subB.apply(lambda x: 0 if (x['WBlock']=='B' and x['LBlock']=='A') else x['Pred'], axis=1)
-# subB['Pred'] = subB.apply(lambda x: 1 if (x['WBlock']=='A' and x['LBlock']=='B') else x['Pred'], axis=1)
-# subB[['ID', 'Pred']].to_csv('../output/Wstats_2018_B.csv', index=False)
-#
-#
-#
+block = pd.read_csv("../Winput2/WNCAATourneySeeds.csv")
+block = block.loc[(block.Season==2018)]
+def blockAB(TeamID, block):
+    if TeamID in block['TeamID'].as_matrix().tolist():
+        Seeds = block.loc[(block.TeamID==TeamID)]['Seed'].iloc[0]
+        if "Y" in Seeds or 'Z' in Seeds:
+            return 'A'
+        elif "W" in Seeds or 'X' in Seeds:
+            return 'B'
+    else:
+        return 0
+
+sub['WBlock'] = sub['WTeamID'].apply(lambda x: blockAB(x, block))
+sub['LBlock'] = sub['LTeamID'].apply(lambda x: blockAB(x, block))
+subA = sub.copy()
+subA['Pred'] = subA.apply(lambda x: 0 if (x['WBlock']=='A' and x['LBlock']=='B') else x['Pred'], axis=1)
+subA['Pred'] = subA.apply(lambda x: 1 if (x['WBlock']=='B' and x['LBlock']=='A') else x['Pred'], axis=1)
+subA[['ID', 'Pred']].to_csv('../output/Wstats_2018_A.csv', index=False)
+
+subB = sub.copy()
+subB['Pred'] = subB.apply(lambda x: 0 if (x['WBlock']=='B' and x['LBlock']=='A') else x['Pred'], axis=1)
+subB['Pred'] = subB.apply(lambda x: 1 if (x['WBlock']=='A' and x['LBlock']=='B') else x['Pred'], axis=1)
+subB[['ID', 'Pred']].to_csv('../output/Wstats_2018_B.csv', index=False)
+
+
+
 
 
 
